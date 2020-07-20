@@ -65,11 +65,11 @@ def train(args, optimizer, train_loader, val_loader, criterion=nn.CrossEntropyLo
     hparams = wandb.config
     wandb.log({'snip_factor':hparams['snip_factor']})
     
-    model = createAlexNet().to(device)
-    pytorch_alexnet = tv.models.alexnet(pretrained=True).to(device)
+    model = createAlexNet().to(device) # model for 200 classes
+    pytorch_alexnet = tv.models.alexnet(pretrained=True).to(device) #pretrained model for 1000 classes
     # apply SNIP
-    keep_masks = SNIP(pytorch_alexnet, hparams['snip_factor'], train_loader, device, img_size=args.img_size)
-    apply_prune_mask(pytorch_alexnet, keep_masks)
+    #keep_masks = SNIP(pytorch_alexnet, hparams['snip_factor'], train_loader, device, img_size=args.img_size)
+    #apply_prune_mask(pytorch_alexnet, keep_masks)
     # for transfer learning and shifting snipped weights over to model
     copyLayerWeightsExceptLast(pytorch_alexnet, model, requires_grad=False)
     model.to(device)
