@@ -65,8 +65,8 @@ def train(args, optimizer, train_loader, val_loader, criterion=nn.CrossEntropyLo
     hparams = wandb.config
     wandb.log({'snip_factor':hparams['snip_factor']})
     
-    model = createAlexNet().to('cpu')
-    pytorch_alexnet = tv.models.alexnet(pretrained=True)
+    model = createAlexNet().to(device)
+    pytorch_alexnet = tv.models.alexnet(pretrained=True).to(device)
     # apply SNIP
     keep_masks = SNIP(model, hparams['snip_factor'], train_loader, device, img_size=args.img_size)
     apply_prune_mask(model, keep_masks)
