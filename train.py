@@ -17,8 +17,10 @@ parser.add_argument('--save', nargs=1, help='directory to save the model',
                     dest='model_path', default='./saved_models', type=str)
 args = parser.parse_args()
 
-data_path = os.path.normpath(args.data_path)
-model_path = os.path.normpath(args.model_path)
+print(args.data_path)
+print(type(args.data_path))
+data_path = os.path.normpath(str(args.data_path))
+model_path = os.path.normpath(str(args.model_path))
 os.makedirs(model_path, exist_ok=True)
 
 image_transforms = tv.transforms.Compose([
