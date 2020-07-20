@@ -50,7 +50,7 @@ def oneHotEncode(t, C):
     pass
 
 
-def train(model, optimizer, train_loader, val_loader, lr=0.001, criterion=nn.CrossEntropyLoss(reduction='mean'), epochs=50, validate_every=2000, save=False, save_path=None, device=torch.device('cuda' if torch.cuda.is_available() else 'cpu')):
+def train(args, model, net, optimizer, train_loader, val_loader, criterion=nn.CrossEntropyLoss(reduction='mean'), save=False, save_path=None, device=torch.device('cuda' if torch.cuda.is_available() else 'cpu')):
     if save and save_path is None:
         raise AssertionError(
             'Saving is enabled but no save path was inputted.')
@@ -73,11 +73,11 @@ def train(model, optimizer, train_loader, val_loader, lr=0.001, criterion=nn.Cro
     percentage_snipped_dict = percentage_snipped(net, model)
     if args.debug:
         print(percentage_snipped_dict)
-        wandb.log(percentage_snipped_dict)
+    wandb.log(percentage_snipped_dict)
     wandb.watch(model, log="all")
 
     # lenet5_cifar100_dev = self.net
-    opt = optimizer(model.parameters(), lr=lr)
+    opt = optimizer(model.parameters(), lr=hparams["init_lr"])
     # criterion = nn.CrossEntropyLoss(reduction="mean")
     train_cross_entropy = []
     train_accuracy = []
@@ -86,7 +86,7 @@ def train(model, optimizer, train_loader, val_loader, lr=0.001, criterion=nn.Cro
 
     best_model_accuracy = 0
 
-    for epoch in range(epochs):
+    for epoch in range(hparams["epochs"]):
         n_correct = 0
         n_total = 0
         for i, batch in enumerate(train_loader):
@@ -115,7 +115,7 @@ def train(model, optimizer, train_loader, val_loader, lr=0.001, criterion=nn.Cro
 
             # evaluation mode (e.g. adds dropped neurons back in)
             model.eval()
-            if i % validate_every == 0:
+            if i % args.validate_every == 0:
                 n_val_correct = 0
                 n_val_total = 0
                 v_cross_entropy_sum = 0
