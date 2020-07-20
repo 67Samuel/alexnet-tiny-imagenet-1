@@ -12,9 +12,9 @@ from nn_helpers import ImagePathDataset, TinyImageNetValSet, createAlexNet, trai
 parser = argparse.ArgumentParser(
     description='Train AlexNet on Tiny Imagenet 200.')
 parser.add_argument('--data', nargs=1, help='dataset directory',
-                    dest='data_path', default='./data/tiny-imagenet-200')
+                    dest='data_path', default='./data/tiny-imagenet-200', type=str)
 parser.add_argument('--save', nargs=1, help='directory to save the model',
-                    dest='model_path', default='./saved_models')
+                    dest='model_path', default='./saved_models', type=str)
 args = parser.parse_args()
 
 data_path = os.path.normpath(args.data_path)
