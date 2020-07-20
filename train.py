@@ -53,7 +53,7 @@ model_path = os.path.normpath(args.model_path)
 os.makedirs(model_path, exist_ok=True)
 
 image_transforms = tv.transforms.Compose([
-    tv.transforms.Resize((224, 224)),
+    tv.transforms.Resize((args.img_size, args.img_size)),
     tv.transforms.ToTensor(),
     tv.transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
     ])
