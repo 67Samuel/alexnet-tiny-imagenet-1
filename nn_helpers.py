@@ -67,7 +67,7 @@ def train(args, model, net, optimizer, train_loader, val_loader, criterion=nn.Cr
     
     model = model.to(device)
     # apply SNIP
-    keep_masks = SNIP(model, hparams['snip_factor'], train_dl, device, img_size=args.img_size)
+    keep_masks = SNIP(model, hparams['snip_factor'], train_loader, device, img_size=args.img_size)
     apply_prune_mask(model, keep_masks)
     # calculating percentage snipped
     percentage_snipped_dict = percentage_snipped(net, model)
