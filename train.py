@@ -15,8 +15,8 @@ parser.add_argument('--data', nargs=1, help='dataset directory',
                     dest='data_path', default='./data/tiny-imagenet-200', type=str)
 parser.add_argument('--save', nargs=1, help='directory to save the model',
                     dest='model_path', default='./saved_models', type=str)
-parser.add_argument('--batch-size', default=64 200, type=int, nargs=+, 
-                    help='train followed by val batch size (default: 64 200)')
+parser.add_argument('--batch-size', default=[64,200], type=int, nargs=+, 
+                    help='train followed by val batch size (default: [64,200])')
 parser.add_argument('--epochs', default=5, type=int, 
                     help='number of epochs (default: 5)')
 args = parser.parse_args()
