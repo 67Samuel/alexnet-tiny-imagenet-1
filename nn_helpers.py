@@ -11,15 +11,18 @@ from torchvision.datasets.folder import default_loader
 import cv2
 from PIL import Image
 
+from SNIP_utils import *
+import wandb
 
-def y_mse(Y, Y_hat):
+
+def y_mse(Y, output):
     # first subtracts element wise from labels
     # then squares element wise
     # then reduces over columnns so that the dims become N * 1
-    se = torch.sum((Y - Y_hat) ** 2, dim=1, keepdim=True)
+    se = torch.sum((Y - output) ** 2, dim=1, keepdim=True)
 
     # then we sum rows and divide by number of rows, N
-    mse = (1. / Y_hat.shape[0]) * torch.sum(se)
+    mse = (1. / output.shape[0]) * torch.sum(se)
 
     return mse
 
@@ -51,8 +54,27 @@ def train(model, optimizer, train_loader, val_loader, lr=0.001, criterion=nn.Cro
     if save and save_path is None:
         raise AssertionError(
             'Saving is enabled but no save path was inputted.')
+        
+    hparams = {'batch_size':args.batch_size,
+               'init_lr':args.init_lr,
+               'weight_decay_rate':args.weight_decay_rate,
+               'epochs':args.epochs,
+               'snip_factor':args.snip_factor}
+    
+    wandb.init(entity="67Samuel", project=args.project, name=args.run_name, config=hparams)
+    hparams = wandb.config
+    wandb.log({'snip_factor':hparams['snip_factor']})
     
     model = model.to(device)
+    # apply SNIP
+    keep_masks = SNIP(model, hparams['snip_factor'], train_dl, device, img_size=args.img_size)
+    apply_prune_mask(model, keep_masks)
+    # calculating percentage snipped
+    percentage_snipped_dict = percentage_snipped(net, model)
+    if args.debug:
+        print(percentage_snipped_dict)
+        wandb.log(percentage_snipped_dict)
+    wandb.watch(model, log="all")
 
     # lenet5_cifar100_dev = self.net
     opt = optimizer(model.parameters(), lr=lr)
@@ -80,6 +102,7 @@ def train(model, optimizer, train_loader, val_loader, lr=0.001, criterion=nn.Cro
 
             output = model(x)
             loss = criterion(output, labels)
+            wandb.log({"loss":loss})
             loss.backward()
             opt.step()
 
@@ -88,6 +111,7 @@ def train(model, optimizer, train_loader, val_loader, lr=0.001, criterion=nn.Cro
             n_correct += (torch.argmax(output, dim=1)
                           == labels).sum().item()
             n_total += N
+            wandb.log({"running accuracy":n_correct/n_total, "epoch":epoch+1})
 
             # evaluation mode (e.g. adds dropped neurons back in)
             model.eval()
@@ -111,7 +135,8 @@ def train(model, optimizer, train_loader, val_loader, lr=0.001, criterion=nn.Cro
                         n_val_correct += (torch.argmax(v_output,
                                                        dim=1) == v_labels).sum().item()
                         n_val_total += v_N
-
+                        
+                wandb.log({"val accuracy":n_val_correct / n_val_total, "val loss":v_cross_entropy_sum / n_total_batches})
                 print(
                     f"[epoch {epoch + 1}, iteration {i}] \t accuracy: {n_val_correct / n_val_total} \t cross entropy: {v_cross_entropy_sum / n_total_batches}")
                 validation_accuracy.append(n_val_correct / n_val_total)
