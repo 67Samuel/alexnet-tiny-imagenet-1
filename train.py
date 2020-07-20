@@ -56,7 +56,7 @@ pytorch_alexnet = tv.models.alexnet(pretrained=True)
 copyLayerWeightsExceptLast(pytorch_alexnet, my_alexnet, requires_grad=False)
 
 model_path_with_name = os.path.join(model_path, 'alexnet.pth')
-o = train(my_alexnet, O.Adam, train_loader, val_loader, epochs=epochs,
+o = train(my_alexnet, O.Adam, train_loader, val_loader, epochs=args.epochs,
           save=True, save_path=model_path_with_name, validate_every=validate_every)
-graphTrainOutput(*o, epochs=epochs, n_samples_in_epoch=n_samples_in_epoch,
+graphTrainOutput(*o, epochs=args.epochs, n_samples_in_epoch=n_samples_in_epoch,
                  validate_every=validate_every)
