@@ -37,10 +37,10 @@ train_loader = torch.utils.data.DataLoader(
 val_dataset = TinyImageNetValSet(os.path.join(
     data_path, 'val'), transform=image_transforms)
 val_loader = torch.utils.data.DataLoader(
-    val_dataset, shuffle=False, batch_size=1000)
+    val_dataset, shuffle=False, batch_size=200)
 
 n_samples_in_epoch = len(train_loader)
-epochs = 2
+epochs = 20
 validate_every = 521
 
 my_alexnet = createAlexNet()
