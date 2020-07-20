@@ -70,11 +70,6 @@ val_loader = torch.utils.data.DataLoader(
 
 n_samples_in_epoch = len(train_loader)
 
-my_alexnet = createAlexNet()
-pytorch_alexnet = tv.models.alexnet(pretrained=True)
-# for transfer learning
-copyLayerWeightsExceptLast(pytorch_alexnet, my_alexnet, requires_grad=False)
-
 model_path_with_name = os.path.join(model_path, 'alexnet.pth')
 o = train(args, my_alexnet, pytorch_alexnet, O.Adam, train_loader, val_loader,
           save=True, save_path=model_path_with_name)
