@@ -11,20 +11,20 @@ from nn_helpers import ImagePathDataset, TinyImageNetValSet, createAlexNet, trai
 
 parser = argparse.ArgumentParser(
     description='Train AlexNet on Tiny Imagenet 200.')
-parser.add_argument('--data', nargs=1, help='dataset directory',
+parser.add_argument('--data', help='dataset directory',
                     dest='data_path', default='./data/tiny-imagenet-200', type=str)
-parser.add_argument('--save', nargs=1, help='directory to save the model',
+parser.add_argument('--save', help='directory to save the model',
                     dest='model_path', default='./saved_models', type=str)
 #parser.add_argument('--batch-size', default=[64,200], type=int, nargs=+, 
 #                    help='train followed by val batch size (default: [64,200])')
 parser.add_argument('--epochs', default=5, type=int, 
                     help='number of epochs (default: 5)')
+parser.add_argument('--lr', default=0.001, type=float, 
+                    help='lr (default: 0.001)')
 args = parser.parse_args()
 
-print(args.data_path[0])
-print(type(args.data_path[0]))
-data_path = os.path.normpath(args.data_path[0])
-model_path = os.path.normpath(args.model_path[0])
+data_path = os.path.normpath(args.data_path)
+model_path = os.path.normpath(args.model_path)
 os.makedirs(model_path, exist_ok=True)
 
 image_transforms = tv.transforms.Compose([
@@ -44,11 +44,7 @@ val_loader = torch.utils.data.DataLoader(
     val_dataset, shuffle=False, batch_size=1000)
 
 n_samples_in_epoch = len(train_loader)
-if type(args.epochs) == type([1]):
-    print('epochs is a list')
-    epochs = args.epochs[0]
-elif type(args.epochs) == type('hi'):
-    epochs = args.epochs
+epochs = args.epochs
 validate_every = 521
 
 my_alexnet = createAlexNet()
@@ -56,7 +52,7 @@ pytorch_alexnet = tv.models.alexnet(pretrained=True)
 copyLayerWeightsExceptLast(pytorch_alexnet, my_alexnet, requires_grad=False)
 
 model_path_with_name = os.path.join(model_path, 'alexnet.pth')
-o = train(my_alexnet, O.Adam, train_loader, val_loader, epochs=args.epochs,
+o = train(my_alexnet, O.Adam, train_loader, val_loader, lr=args.lr, epochs=args.epochs,
           save=True, save_path=model_path_with_name, validate_every=validate_every)
 graphTrainOutput(*o, epochs=args.epochs, n_samples_in_epoch=n_samples_in_epoch,
                  validate_every=validate_every)
