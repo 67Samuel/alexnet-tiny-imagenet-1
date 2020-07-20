@@ -18,8 +18,8 @@ parser.add_argument('--data', nargs=1, help='dataset directory',
                     dest='data_path', default='./data/tiny-imagenet-200')
 args = parser.parse_args()
 
-data_path = os.path.normpath(args.data_path)
-model_path = os.path.normpath(args.model_path)
+data_path = os.path.normpath(args.data_path[0])
+model_path = os.path.normpath(args.model_path[0])
 model_file_path = os.path.join(model_path, 'alexnet.pth')
 
 model = createAlexNet()
