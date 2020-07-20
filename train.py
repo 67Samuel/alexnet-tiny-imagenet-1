@@ -15,8 +15,8 @@ parser.add_argument('--data', nargs=1, help='dataset directory',
                     dest='data_path', default='./data/tiny-imagenet-200', type=str)
 parser.add_argument('--save', nargs=1, help='directory to save the model',
                     dest='model_path', default='./saved_models', type=str)
-parser.add_argument('--batch-size', default=[64,200], type=int, nargs=+, 
-                    help='train followed by val batch size (default: [64,200])')
+#parser.add_argument('--batch-size', default=[64,200], type=int, nargs=+, 
+#                    help='train followed by val batch size (default: [64,200])')
 parser.add_argument('--epochs', default=5, type=int, 
                     help='number of epochs (default: 5)')
 args = parser.parse_args()
@@ -36,12 +36,12 @@ image_transforms = tv.transforms.Compose([
 train_dataset = tv.datasets.ImageFolder(os.path.join(
     data_path, 'train'), transform=image_transforms)
 train_loader = torch.utils.data.DataLoader(
-    train_dataset, shuffle=True, batch_size=args.batch_size[0])
+    train_dataset, shuffle=True, batch_size=64)
 
 val_dataset = TinyImageNetValSet(os.path.join(
     data_path, 'val'), transform=image_transforms)
 val_loader = torch.utils.data.DataLoader(
-    val_dataset, shuffle=False, batch_size=args.batch_size[1])
+    val_dataset, shuffle=False, batch_size=1000)
 
 n_samples_in_epoch = len(train_loader)
 if type(args.epochs) == type([1]):
