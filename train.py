@@ -71,7 +71,7 @@ val_loader = torch.utils.data.DataLoader(
 n_samples_in_epoch = len(train_loader)
 
 model_path_with_name = os.path.join(model_path, 'alexnet.pth')
-o = train(args, my_alexnet, pytorch_alexnet, O.Adam, train_loader, val_loader,
+o = train(args, O.Adam, train_loader, val_loader,
           save=True, save_path=model_path_with_name)
 graphTrainOutput(*o, epochs=args.epochs, n_samples_in_epoch=n_samples_in_epoch,
                  validate_every=args.validate_every)
