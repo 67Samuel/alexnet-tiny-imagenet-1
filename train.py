@@ -19,12 +19,12 @@ parser.add_argument('--save', help='directory to save the model',
 # hparams
 parser.add_argument('--batch-size', default=200, type=int, 
                     help='mini-batch size for training (default: 200)')
-parser.add_argument('--epochs', default=200, type=int, 
-                    help='number of total epochs to run (default: 200)')
+parser.add_argument('--epochs', default=5, type=int, 
+                    help='number of total epochs to run (default: 5)')
 parser.add_argument('--init-lr', default=0.001, type=float, 
                     help='learning rate (default: 0.001)')
-parser.add_argument('--snip-factor', default=0.1, type=float, 
-                    help='snip factor (default: 0.1)')
+parser.add_argument('--snip-factor', default=1.0, type=float, 
+                    help='snip factor (default: 1.0)')
 parser.add_argument('--weight-decay-rate', default=5e-4, type=float, 
                     help='set weight decay rate (default: 5e-4)')
 
