@@ -74,7 +74,7 @@ def train(args, optimizer, train_loader, val_loader, criterion=nn.CrossEntropyLo
     copyLayerWeightsExceptLast(pytorch_alexnet, model, requires_grad=False)
     model.to(device)
     # calculating percentage snipped
-    percentage_snipped_dict = percentage_snipped(net, model)
+    percentage_snipped_dict = percentage_snipped(pytorch_alexnet, model)
     if args.debug:
         print(percentage_snipped_dict)
     wandb.log(percentage_snipped_dict)
