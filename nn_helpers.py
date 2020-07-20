@@ -78,14 +78,14 @@ def train(model, optimizer, train_loader, val_loader, lr=0.001, criterion=nn.Cro
             # clear previous gradients
             opt.zero_grad()
 
-            y_hat = model(x)
-            loss = criterion(y_hat, labels)
+            output = model(x)
+            loss = criterion(output, labels)
             loss.backward()
             opt.step()
 
             train_cross_entropy.append(loss)
 
-            n_correct += (torch.argmax(y_hat, dim=1)
+            n_correct += (torch.argmax(output, dim=1)
                           == labels).sum().item()
             n_total += N
 
@@ -105,10 +105,10 @@ def train(model, optimizer, train_loader, val_loader, lr=0.001, criterion=nn.Cro
                             device), v_labels.to(device)
                         v_N = v_x.shape[0]
 
-                        v_y_hat = model(v_x)
-                        v_loss = criterion(v_y_hat, v_labels)
+                        v_output = model(v_x)
+                        v_loss = criterion(v_output, v_labels)
                         v_cross_entropy_sum += v_loss
-                        n_val_correct += (torch.argmax(v_y_hat,
+                        n_val_correct += (torch.argmax(v_output,
                                                        dim=1) == v_labels).sum().item()
                         n_val_total += v_N
 
@@ -142,14 +142,14 @@ def graphTrainOutput(train_cross_entropy, train_accuracy, validation_cross_entro
     plt.plot(x, y_test, label='validation cross entropy')
     plt.xlabel('epochs')
     plt.ylabel('cross entropy')
-    plt.title('lenet5 mnist validation loss')
+    plt.title('alexnet tinyimagenet validation loss')
     plt.legend()
     plt.show()
 
     plt.plot(x, y, label='train cross entropy')
     plt.xlabel('epochs')
     plt.ylabel('cross entropy')
-    plt.title('lenet5 mnist train loss')
+    plt.title('alexnet tinyimagenet train loss')
     plt.legend()
     plt.show()
 
@@ -281,7 +281,8 @@ class TinyImageNetValSet(torch.utils.data.Dataset):
         self.target_transform = target_transform
 
         classes_file = os.path.join(self.root, '../wnids.txt')
-
+        
+        # getting a dictionary of classes and sorting them and giving them indexes
         self.classes = []
         with open(classes_file, 'r') as f:
             self.classes = f.readlines()
@@ -294,7 +295,7 @@ class TinyImageNetValSet(torch.utils.data.Dataset):
         images_y_file = os.path.join(self.root, 'val_annotations.txt')
         with open(images_y_file, 'r') as f:
             lines = f.readlines()
-
+        
         self.class_dict = {}
         for line in lines:
             cols = line.split('\t')
@@ -316,7 +317,7 @@ class TinyImageNetValSet(torch.utils.data.Dataset):
     def __getitem__(self, i):
         path, target = self.samples[i]
         print(path)
-        sample = self.loader(path)
+        sample = self.loader(path) # default_loader is a function from torchvision that loads an image given its path
         if self.transform is not None:
             sample = self.transform(sample)
         if self.target_transform is not None:
