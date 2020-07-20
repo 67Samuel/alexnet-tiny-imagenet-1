@@ -65,10 +65,14 @@ def train(args, model, net, optimizer, train_loader, val_loader, criterion=nn.Cr
     hparams = wandb.config
     wandb.log({'snip_factor':hparams['snip_factor']})
     
-    model = model.to(device)
+    model = createAlexNet()
+    pytorch_alexnet = tv.models.alexnet(pretrained=True)
     # apply SNIP
     keep_masks = SNIP(model, hparams['snip_factor'], train_loader, device, img_size=args.img_size)
     apply_prune_mask(model, keep_masks)
+    # for transfer learning
+    copyLayerWeightsExceptLast(pytorch_alexnet, model, requires_grad=False)
+    model.to(device)
     # calculating percentage snipped
     percentage_snipped_dict = percentage_snipped(net, model)
     if args.debug:
