@@ -50,7 +50,7 @@ def oneHotEncode(t, C):
     pass
 
 
-def train(args, model, net, optimizer, train_loader, val_loader, criterion=nn.CrossEntropyLoss(reduction='mean'), save=False, save_path=None, device=torch.device('cuda' if torch.cuda.is_available() else 'cpu')):
+def train(args, optimizer, train_loader, val_loader, criterion=nn.CrossEntropyLoss(reduction='mean'), save=False, save_path=None, device=torch.device('cuda' if torch.cuda.is_available() else 'cpu')):
     if save and save_path is None:
         raise AssertionError(
             'Saving is enabled but no save path was inputted.')
@@ -65,7 +65,7 @@ def train(args, model, net, optimizer, train_loader, val_loader, criterion=nn.Cr
     hparams = wandb.config
     wandb.log({'snip_factor':hparams['snip_factor']})
     
-    model = createAlexNet()
+    model = createAlexNet().to('cpu')
     pytorch_alexnet = tv.models.alexnet(pretrained=True)
     # apply SNIP
     keep_masks = SNIP(model, hparams['snip_factor'], train_loader, device, img_size=args.img_size)
