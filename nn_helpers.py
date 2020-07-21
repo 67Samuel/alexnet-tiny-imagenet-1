@@ -75,7 +75,7 @@ def train(hparams, args, optimizer, train_loader, val_loader, criterion=nn.Cross
     wandb.log(percentage_snipped_dict)
     wandb.watch(model, log="all")
 
-    opt = optimizer(model.parameters(), lr=hparams["init_lr"], weight_decay=hparams['weight_decay'])
+    opt = optimizer(model.parameters(), lr=hparams["init_lr"], weight_decay=hparams['weight_decay_rate'])
     lr_scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(
                    opt, patience=1, factor=0.5)
     train_cross_entropy = []
