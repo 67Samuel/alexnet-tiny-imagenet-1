@@ -168,12 +168,13 @@ def train(args, optimizer, train_loader, val_loader, criterion=nn.CrossEntropyLo
                 validation_accuracy.append(n_val_correct / n_val_total)
                 validation_cross_entropy.append(
                     v_cross_entropy_sum / n_total_batches)
-                if n_val_correct / n_val_total >= best_model_accuracy:
-                    best_model_accuracy = n_val_correct / n_val_total
-                    if save:
-                        print(f'Saving current best model to \'{save_path}\'.')
-                        torch.save(model.state_dict(),
-                                   save_path)
+                if args.save_model:
+                    if n_val_correct / n_val_total >= best_model_accuracy:
+                        best_model_accuracy = n_val_correct / n_val_total
+                        if save:
+                            print(f'Saving current best model to \'{save_path}\'.')
+                            torch.save(model.state_dict(),
+                                       save_path)
                         
         end_time = time.time()
         to_nearest_mins, mins, secs = epoch_time(start_time, end_time)
