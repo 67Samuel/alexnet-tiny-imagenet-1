@@ -182,7 +182,7 @@ def train(args, optimizer, train_loader, val_loader, criterion=nn.CrossEntropyLo
         num_correct_k1 = 0
         num_correct_k = 0
         try:
-            for X,y in val_dl:
+            for X,y in val_loader:
                 final_preds = model(X.to(device))
                 labels = y.to(device)
                 num_correct_k1 += get_topk(final_preds, labels, k=1)
@@ -195,6 +195,7 @@ def train(args, optimizer, train_loader, val_loader, criterion=nn.CrossEntropyLo
         except Exception as e:
             print('getting topk failed')
             print(e)
+            return
         print(
             f"epoch {epoch + 1} accumulated train accuracy: {n_correct / n_total}")
         train_accuracy.append(n_correct / n_total)
