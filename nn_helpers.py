@@ -27,6 +27,12 @@ def get_topk(pred_batch, label_batch, k=1):
                 break
     return num_correct
 
+def epoch_time(start_time, end_time):
+    elapsed_time = end_time - start_time
+    elapsed_mins = int(elapsed_time / 60)
+    elapsed_secs = int(elapsed_time - (elapsed_mins * 60))
+    round_to_mins = int(round(elapsed_time/60,0))
+    return round_to_mins, elapsed_mins, elapsed_secs
 
 def y_mse(Y, output):
     # first subtracts element wise from labels
@@ -75,7 +81,7 @@ def train(args, optimizer, train_loader, val_loader, criterion=nn.CrossEntropyLo
     
     wandb.init(entity="67Samuel", project=args.project, name=args.run_name, config=hparams)
     hparams = wandb.config
-    wandb.log({'snip_factor':hparams['snip_factor']})
+    wandb.log({'percentage snipped':((1-hparams['snip_factor'])*100)})
     
     model = createAlexNet().to(device) # model for 200 classes
     pytorch_alexnet = tv.models.alexnet(pretrained=True).to(device) #pretrained model for 1000 classes
@@ -104,6 +110,7 @@ def train(args, optimizer, train_loader, val_loader, criterion=nn.CrossEntropyLo
     best_model_accuracy = 0
 
     for epoch in range(hparams["epochs"]):
+        start_time = time.time()
         n_correct = 0
         n_total = 0
         for i, batch in enumerate(train_loader):
@@ -166,6 +173,11 @@ def train(args, optimizer, train_loader, val_loader, criterion=nn.CrossEntropyLo
                         print(f'Saving current best model to \'{save_path}\'.')
                         torch.save(model.state_dict(),
                                    save_path)
+                        
+        end_time = time.time()
+        to_nearest_mins, mins, secs = epoch_time(start_time, end_time)
+        print(f'Time taken: {mins}m {secs}s')
+        wandb.log({'Time taken (min)':to_nearest_mins})
         num_correct_k1 = 0
         num_correct_k = 0
         try:
