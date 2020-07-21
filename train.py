@@ -67,7 +67,7 @@ image_transforms = tv.transforms.Compose([
 train_dataset = tv.datasets.ImageFolder(os.path.join(
     data_path, 'train'), transform=image_transforms)
 train_loader = torch.utils.data.DataLoader(
-    train_dataset, shuffle=True, batch_size=args.batch_size)
+    train_dataset, shuffle=True, batch_size=hparams['batch_size'])
 
 val_dataset = TinyImageNetValSet(os.path.join(
     data_path, 'val'), transform=image_transforms)
