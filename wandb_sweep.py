@@ -1,2 +1,2 @@
 import os
-os.popen('sh /wandb_sweep.sh')
+os.popen('sh ./wandb_sweep.sh')
