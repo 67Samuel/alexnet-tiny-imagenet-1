@@ -23,6 +23,7 @@ parser.add_argument('--data', help='dataset directory',
 parser.add_argument('--save', help='directory to save the model',
                     dest='model_path', default='./saved_models', type=str)
 
+# hparams
 parser.add_argument('--batch_size', default=200, type=int, 
                     help='mini batch size for training (default: 200)')
 parser.add_argument('--epochs', default=5, type=int, 
@@ -47,6 +48,8 @@ parser.add_argument('--perform_snip', action='store_true',  default=False,
                     help='perform snip (default: False)')  
 parser.add_argument('--validate_every', default='512', type=int, 
                     help='validation step (default: 521)') 
+parser.add_argument('--topk', default=5, type=int, 
+                    help='top-k accuracy to get besides 1 (default: 5)')
 
 # debug settings
 parser.add_argument('--debug', action='store_true', default=False, 
