@@ -38,15 +38,15 @@ parser.add_argument('--save', help='directory to save the model',
 # wandb set-up
 parser.add_argument('--project', default='pretrained_alexnet_SNIP', type=str, 
                     help='name of wandb project (default: pretrained alexnet (SNIP))')  
-parser.add_argument('--run-name', default='test', type=str, 
+parser.add_argument('--run_name', default='test', type=str, 
                     help='name of the run, recorded in wandb (default: test)')  
 
 # training settings
-parser.add_argument('--img-size', default=224, type=int, 
+parser.add_argument('--img_size', default=224, type=int, 
                     help='image size (default: 224)')  
-parser.add_argument('--perform-snip', action='store_true',  default=False, 
+parser.add_argument('--perform_snip', action='store_true',  default=False, 
                     help='perform snip (default: False)')  
-parser.add_argument('--validate-every', default='512', type=int, 
+parser.add_argument('--validate_every', default='512', type=int, 
                     help='validation step (default: 521)') 
 
 # debug settings
