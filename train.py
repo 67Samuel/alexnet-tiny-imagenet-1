@@ -10,11 +10,11 @@ import torchvision as tv
 from nn_helpers import ImagePathDataset, TinyImageNetValSet, createAlexNet, train, graphTrainOutput, copyLayerWeightsExceptLast
 
 # hparams
-hparams = {'batch_size':200,
-           'epochs':5,
-           'init_lr':0.001,
-           'snip_factor':1.0,
-           'weight_decay_rate':5e-4}
+#hparams = {'batch_size':200,
+#           'epochs':5,
+#           'init_lr':0.001,
+#           'snip_factor':1.0,
+#           'weight_decay_rate':5e-4}
 
 parser = argparse.ArgumentParser(
     description='Train AlexNet on Tiny Imagenet 200.')
@@ -23,16 +23,16 @@ parser.add_argument('--data', help='dataset directory',
 parser.add_argument('--save', help='directory to save the model',
                     dest='model_path', default='./saved_models', type=str)
 
-#parser.add_argument('--batch-size', default=200, type=int, 
-#                    help='mini-batch size for training (default: 200)')
-#parser.add_argument('--epochs', default=5, type=int, 
-#                    help='number of total epochs to run (default: 5)')
-#parser.add_argument('--init-lr', default=0.001, type=float, 
-#                    help='learning rate (default: 0.001)')
-#parser.add_argument('--snip-factor', default=1.0, type=float, 
-#                    help='snip factor (default: 1.0)')
-#parser.add_argument('--weight-decay-rate', default=5e-4, type=float, 
-#                    help='set weight decay rate (default: 5e-4)')
+parser.add_argument('--batch_size', default=200, type=int, 
+                    help='mini batch size for training (default: 200)')
+parser.add_argument('--epochs', default=5, type=int, 
+                    help='number of total epochs to run (default: 5)')
+parser.add_argument('--init_lr', default=0.001, type=float, 
+                    help='learning rate (default: 0.001)')
+parser.add_argument('--snip_factor', default=1.0, type=float, 
+                    help='snip factor (default: 1.0)')
+parser.add_argument('--weight_decay_rate', default=5e-4, type=float, 
+                    help='set weight decay rate (default: 5e-4)')
 
 # wandb set-up
 parser.add_argument('--project', default='pretrained_alexnet_SNIP', type=str, 
@@ -77,7 +77,7 @@ val_loader = torch.utils.data.DataLoader(
 n_samples_in_epoch = len(train_loader)
 
 model_path_with_name = os.path.join(model_path, 'alexnet.pth')
-o = train(hparams, args, O.Adam, train_loader, val_loader,
+o = train(args, O.Adam, train_loader, val_loader,
           save=True, save_path=model_path_with_name)
 graphTrainOutput(*o, epochs=hparams['epochs'], n_samples_in_epoch=n_samples_in_epoch,
                  validate_every=args.validate_every)
