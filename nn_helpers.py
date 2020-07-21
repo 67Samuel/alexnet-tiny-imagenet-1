@@ -50,10 +50,15 @@ def oneHotEncode(t, C):
     pass
 
 
-def train(hparams, args, optimizer, train_loader, val_loader, criterion=nn.CrossEntropyLoss(reduction='mean'), save=False, save_path=None, device=torch.device('cuda:2' if torch.cuda.is_available() else 'cpu')):
+def train(args, optimizer, train_loader, val_loader, criterion=nn.CrossEntropyLoss(reduction='mean'), save=False, save_path=None, device=torch.device('cuda:2' if torch.cuda.is_available() else 'cpu')):
     if save and save_path is None:
         raise AssertionError(
             'Saving is enabled but no save path was inputted.')
+    hparams = {'batch_size':args.batch_size,
+           'epochs':args.epochs,
+           'init_lr':args.init_lr,
+           'snip_factor':args.snip_factor,
+           'weight_decay_rate':args.weight_decay_rate}
     
     wandb.init(entity="67Samuel", project=args.project, name=args.run_name, config=hparams)
     hparams = wandb.config
