@@ -17,29 +17,29 @@ parser.add_argument('--save', help='directory to save the model',
                     dest='model_path', default='./saved_models', type=str)
 
 # hparams
-parser.add_argument('--batch-size', default=200, type=int, 
+parser.add_argument('--batch_size', default=200, type=int, 
                     help='mini-batch size for training (default: 200)')
 parser.add_argument('--epochs', default=5, type=int, 
                     help='number of total epochs to run (default: 5)')
-parser.add_argument('--init-lr', default=0.001, type=float, 
+parser.add_argument('--init_lr', default=0.001, type=float, 
                     help='learning rate (default: 0.001)')
-parser.add_argument('--snip-factor', default=1.0, type=float, 
+parser.add_argument('--snip_factor', default=1.0, type=float, 
                     help='snip factor (default: 1.0)')
-parser.add_argument('--weight-decay-rate', default=5e-4, type=float, 
+parser.add_argument('--weight_decay_rate', default=5e-4, type=float, 
                     help='set weight decay rate (default: 5e-4)')
 
 # wandb set-up
 parser.add_argument('--project', default='pretrained alexnet (SNIP)', type=str, 
                     help='name of wandb project (default: pretrained alexnet (SNIP))')  
-parser.add_argument('--run-name', default='test', type=str, 
+parser.add_argument('--run_name', default='test', type=str, 
                     help='name of the run, recorded in wandb (default: test)')  
 
 # training settings
-parser.add_argument('--img-size', default=224, type=int, 
+parser.add_argument('--img_size', default=224, type=int, 
                     help='image size (default: 224)')  
-parser.add_argument('--perform-snip', action='store_true',  default=False, 
+parser.add_argument('--perform_snip', action='store_true',  default=False, 
                     help='perform snip (default: False)')  
-parser.add_argument('--validate-every', default='512', type=int, 
+parser.add_argument('--validate_every', default='512', type=int, 
                     help='validation step (default: 521)') 
 
 # debug settings
