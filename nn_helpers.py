@@ -387,7 +387,7 @@ class TinyImageNetValSet(torch.utils.data.Dataset):
 
     def __getitem__(self, i):
         path, target = self.samples[i]
-        print(path)
+        #print(path)
         sample = self.loader(path) # default_loader is a function from torchvision that loads an image given its path
         if self.transform is not None:
             sample = self.transform(sample)
