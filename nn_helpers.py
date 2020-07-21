@@ -13,6 +13,7 @@ from PIL import Image
 
 from SNIP_utils import *
 import wandb
+import time
 
 def get_topk(pred_batch, label_batch, k=1):
     num_correct=0
