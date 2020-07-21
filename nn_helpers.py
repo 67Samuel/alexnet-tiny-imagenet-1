@@ -14,6 +14,19 @@ from PIL import Image
 from SNIP_utils import *
 import wandb
 
+def get_topk(pred_batch, label_batch, k=1):
+    num_correct=0
+    batch_size = label_batch.shape[0]
+    for datapoint in range(batch_size):
+        pred = pred_batch[datapoint]
+        _, topk_idx = torch.topk(pred, k)
+        label = label_batch[datapoint]
+        for idx in topk_idx:
+            if int(idx) == int(label):
+                num_correct+=1
+                break
+    return num_correct
+
 
 def y_mse(Y, output):
     # first subtracts element wise from labels
@@ -153,7 +166,22 @@ def train(args, optimizer, train_loader, val_loader, criterion=nn.CrossEntropyLo
                         print(f'Saving current best model to \'{save_path}\'.')
                         torch.save(model.state_dict(),
                                    save_path)
-
+        num_correct_k1 = 0
+        num_correct_k = 0
+        try:
+            for X,y in val_dl:
+                final_preds = model(X.to(device))
+                labels = y.to(device)
+                num_correct_k1 += get_topk(final_preds, labels, k=1)
+                num_correct_k += get_topk(final_preds, labels, k=args.topk)
+            print('len of val loader is {len(val_loader)}')
+            print(f"Final Top-1 acc: {num_correct_k1*100/len(val_loader)}%")
+            print(f"Final Top-{args.topk} acc: {num_correct_k*100/len(val_loader)}%")
+            topk_acc = f"top{args.topk}_acc%"
+            wandb.log({'top1_acc%':(num_correct_k1*100/len(val_loader)), topk_acc:(num_correct_k*100/len(val_loader))}
+        except Exception as e:
+            print('getting topk failed')
+            print(e)
         print(
             f"epoch {epoch + 1} accumulated train accuracy: {n_correct / n_total}")
         train_accuracy.append(n_correct / n_total)
