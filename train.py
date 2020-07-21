@@ -67,7 +67,7 @@ image_transforms = tv.transforms.Compose([
 train_dataset = tv.datasets.ImageFolder(os.path.join(
     data_path, 'train'), transform=image_transforms)
 train_loader = torch.utils.data.DataLoader(
-    train_dataset, shuffle=True, batch_size=hparams['batch_size'])
+    train_dataset, shuffle=True, batch_size=args.batch_size)
 
 val_dataset = TinyImageNetValSet(os.path.join(
     data_path, 'val'), transform=image_transforms)
@@ -79,5 +79,5 @@ n_samples_in_epoch = len(train_loader)
 model_path_with_name = os.path.join(model_path, 'alexnet.pth')
 o = train(args, O.Adam, train_loader, val_loader,
           save=True, save_path=model_path_with_name)
-graphTrainOutput(*o, epochs=hparams['epochs'], n_samples_in_epoch=n_samples_in_epoch,
+graphTrainOutput(*o, epochs=args.epochs, n_samples_in_epoch=n_samples_in_epoch,
                  validate_every=args.validate_every)
