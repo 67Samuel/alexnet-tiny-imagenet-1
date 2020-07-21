@@ -50,6 +50,8 @@ parser.add_argument('--validate_every', default='512', type=int,
                     help='validation step (default: 521)') 
 parser.add_argument('--topk', default=5, type=int, 
                     help='top-k accuracy to get besides 1 (default: 5)')
+parser.add_argument('--save_model', action='store_true', default=False, 
+                    help='save the best version of the model (default: False)')
 
 # debug settings
 parser.add_argument('--debug', action='store_true', default=False, 
