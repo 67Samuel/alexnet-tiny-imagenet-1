@@ -9,6 +9,13 @@ import torchvision as tv
 
 from nn_helpers import ImagePathDataset, TinyImageNetValSet, createAlexNet, train, graphTrainOutput, copyLayerWeightsExceptLast
 
+# hparams
+hparams = {'batch_size':200,
+           'epochs':5,
+           'init_lr':0.001,
+           'snip_factor':1.0,
+           'weight_decay_rate':5e-4
+
 parser = argparse.ArgumentParser(
     description='Train AlexNet on Tiny Imagenet 200.')
 parser.add_argument('--data', help='dataset directory',
@@ -16,12 +23,6 @@ parser.add_argument('--data', help='dataset directory',
 parser.add_argument('--save', help='directory to save the model',
                     dest='model_path', default='./saved_models', type=str)
 
-# hparams
-hparams = {'batch_size':200,
-           'epochs':5,
-           'init_lr':0.001,
-           'snip_factor':1.0,
-           'weight_decay_rate':5e-4
 }
 #parser.add_argument('--batch-size', default=200, type=int, 
 #                    help='mini-batch size for training (default: 200)')
