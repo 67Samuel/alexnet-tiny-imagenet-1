@@ -23,7 +23,6 @@ parser.add_argument('--data', help='dataset directory',
 parser.add_argument('--save', help='directory to save the model',
                     dest='model_path', default='./saved_models', type=str)
 
-}
 #parser.add_argument('--batch-size', default=200, type=int, 
 #                    help='mini-batch size for training (default: 200)')
 #parser.add_argument('--epochs', default=5, type=int, 
