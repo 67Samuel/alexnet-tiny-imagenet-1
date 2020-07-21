@@ -14,7 +14,7 @@ hparams = {'batch_size':200,
            'epochs':5,
            'init_lr':0.001,
            'snip_factor':1.0,
-           'weight_decay_rate':5e-4
+           'weight_decay_rate':5e-4}
 
 parser = argparse.ArgumentParser(
     description='Train AlexNet on Tiny Imagenet 200.')
