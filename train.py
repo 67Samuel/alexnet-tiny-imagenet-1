@@ -79,5 +79,5 @@ n_samples_in_epoch = len(train_loader)
 model_path_with_name = os.path.join(model_path, 'alexnet.pth')
 o = train(hparams, args, O.Adam, train_loader, val_loader,
           save=True, save_path=model_path_with_name)
-graphTrainOutput(*o, epochs=args.epochs, n_samples_in_epoch=n_samples_in_epoch,
+graphTrainOutput(*o, epochs=hparams['epochs'], n_samples_in_epoch=n_samples_in_epoch,
                  validate_every=args.validate_every)
