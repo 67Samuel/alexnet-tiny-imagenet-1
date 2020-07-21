@@ -1,0 +1,16 @@
+program: train.py
+method: grid
+metric:
+  name: val loss
+  goal: minimize
+parameters:
+  init_lr:
+    values: [0.005,0.01,0.02]
+  batch_size:
+    values: [50,100,150,200,250]
+  weight_decay_rate:
+    values: [0.0005,0.00005]
+  snip_factor:
+    values: [0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1.0]
+  epochs:
+    values: [2,3,4]
