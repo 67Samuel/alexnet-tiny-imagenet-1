@@ -191,7 +191,7 @@ def train(args, optimizer, train_loader, val_loader, criterion=nn.CrossEntropyLo
             print(f"Final Top-1 acc: {num_correct_k1*100/len(val_loader)}%")
             print(f"Final Top-{args.topk} acc: {num_correct_k*100/len(val_loader)}%")
             topk_acc = f"top{args.topk}_acc%"
-            wandb.log({'top1_acc%':(num_correct_k1*100/len(val_loader)), topk_acc:(num_correct_k*100/len(val_loader))}
+            wandb.log({'top1_acc%':(num_correct_k1*100/len(val_loader)), topk_acc:(num_correct_k*100/len(val_loader))})
         except Exception as e:
             print('getting topk failed')
             print(e)
