@@ -56,6 +56,8 @@ parser.add_argument('--cuda', default=2, type=int,
                     help='cuda device number to use (default: 2)')
 parser.add_argument('--acc_target', default=35.0, type=float, 
                     help='target validation accuracy to stop training at (default: 35.0)')
+parser.add_argument('--tl', action='store_true', default=False, 
+                    help='train only output layer (default: False)')
 
 
 # debug settings
