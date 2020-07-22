@@ -67,7 +67,9 @@ parser.add_argument('--lesv', default=1.0, type=float,
 parser.add_argument('--late-early-stop', default=3, type=int, 
                     help='patience of early stopper that activates when loss<args.lesv (default: 3)')
 parser.add_argument('--esp', default=5, type=int, 
-                    help='patience for early stopping (default: 5)')    
+                    help='patience for early stopping (default: 5)')  
+parser.add_argument('--pretrain', action='store_true',  default=False, 
+                    help='load pretrained model (default: False)') 
 
 
 # debug settings
