@@ -135,7 +135,7 @@ def train(args, optimizer, train_loader, val_loader, criterion=nn.CrossEntropyLo
     wandb.log({'percentage snipped':((1-hparams['snip_factor'])*100)})
     
     if args.load_model != None:
-        model_path = os.path.normpath(args.model_path[0])
+        model_path = os.path.normpath(args.load_model[0])
         model_file_path = os.path.join(model_path, 'alexnet.pth')
         model = createAlexNet()
         model.load_state_dict(torch.load(model_file_path, map_location='cpu'))
