@@ -92,7 +92,7 @@ def train(args, optimizer, train_loader, val_loader, criterion=nn.CrossEntropyLo
     keep_masks = SNIP(pytorch_alexnet, hparams['snip_factor'], train_loader, device, img_size=args.img_size)
     apply_prune_mask(pytorch_alexnet, keep_masks)
     # for transfer learning and shifting snipped weights over to model
-    copyLayerWeightsExceptLast(pytorch_alexnet, model, requires_grad=False)
+    copyLayerWeightsExceptLast(pytorch_alexnet, model, requires_grad=args.tl)
     model.to(device)
     # calculating percentage snipped
     net = tv.models.alexnet(pretrained=True).to(device)
