@@ -116,10 +116,19 @@ def train(args, optimizer, train_loader, val_loader, criterion=nn.CrossEntropyLo
     validation_cross_entropy = []
     validation_accuracy = []
     target_acc_reached = False
+    if args.early_stopping:
+        early_stopper = EarlyStopping(patience=args.esp)
+        late_early_stopping=False
 
     best_model_accuracy = 0
     start_time = time.time()
     for epoch in range(hparams["epochs"]):
+        if args.early_stopping:
+            if (early_stopper.early_stop == True):
+                break
+            if late_early_stopping:
+                if (late_early_stopper.early_stop == True):
+                    break
         if target_acc_reached == True:
             break
         n_correct = 0
@@ -180,6 +189,17 @@ def train(args, optimizer, train_loader, val_loader, criterion=nn.CrossEntropyLo
                     print(f'Time to reach acc of {args.acc_target}%: {mins}m {secs}s')
                     wandb.log({f'Time to reach acc of {args.acc_target}%':to_nearest_secs})
                     target_acc_reached = True
+                if args.early_stopping:
+                    early_stopper(val_loss=(v_cross_entropy_sum / n_total_batches), model=model)
+                    if early_stopper.early_stop == True:
+                        break
+                    if late_early_stopping:
+                        late_early_stopper(val_loss=(v_cross_entropy_sum / n_total_batches), model=model)
+                        if late_early_stopper.early_stop == True:
+                            break
+                if ((v_cross_entropy_sum / n_total_batches) < args.lesv) and (late_early_stopping==False):
+                    late_early_stopper = EarlyStopping(patience=args.late_early_stop)
+                    late_early_stopping = True
                    
         print(
             f"epoch {epoch + 1} accumulated train accuracy: {n_correct*100 / n_total}%")
