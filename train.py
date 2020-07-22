@@ -70,6 +70,7 @@ parser.add_argument('--esp', default=5, type=int,
                     help='patience for early stopping (default: 5)')  
 parser.add_argument('--pretrain', action='store_true',  default=False, 
                     help='load pretrained model (default: False)') 
+parser.add_argument('--load_model', nargs=1, help='directory of the saved model', default='./saved_models')
 
 
 # debug settings
