@@ -60,8 +60,7 @@ def train(args, optimizer, train_loader, val_loader, criterion=nn.CrossEntropyLo
                'weight_decay_rate':args.weight_decay_rate,
                'epochs':args.epochs,
                'snip_factor':args.snip_factor}
-    
-    wandb.init(entity="67Samuel", project=args.project, name=args.run_name, config=hparams)
+    wandb.init(entity="67Samuel", config=hparams)
     hparams = wandb.config
     wandb.log({'snip_factor':hparams['snip_factor']})
     
