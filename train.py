@@ -52,6 +52,9 @@ parser.add_argument('--topk', default=5, type=int,
                     help='top-k accuracy to get besides 1 (default: 5)')
 parser.add_argument('--save_model', action='store_true', default=False, 
                     help='save the best version of the model (default: False)')
+parser.add_argument('--cuda', default=2, type=int, 
+                    help='cuda device number to use (default: 2)')
+
 
 # debug settings
 parser.add_argument('--debug', action='store_true', default=False, 
