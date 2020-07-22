@@ -46,7 +46,7 @@ parser.add_argument('--img_size', default=224, type=int,
                     help='image size (default: 224)')  
 parser.add_argument('--perform_snip', action='store_true',  default=False, 
                     help='perform snip (default: False)')  
-parser.add_argument('--validate_every', default='512', type=int, 
+parser.add_argument('--validate_every', default='521', type=int, 
                     help='validation step (default: 521)') 
 parser.add_argument('--topk', default=5, type=int, 
                     help='top-k accuracy to get besides 1 (default: 5)')
