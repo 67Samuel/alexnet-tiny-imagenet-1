@@ -54,6 +54,8 @@ parser.add_argument('--save_model', action='store_true', default=False,
                     help='save the best version of the model (default: False)')
 parser.add_argument('--cuda', default=2, type=int, 
                     help='cuda device number to use (default: 2)')
+parser.add_argument('--acc_target', default=35.0, type=float, 
+                    help='target validation accuracy to stop training at (default: 35.0)')
 
 
 # debug settings
