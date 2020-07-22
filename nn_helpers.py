@@ -134,6 +134,12 @@ def train(args, optimizer, train_loader, val_loader, criterion=nn.CrossEntropyLo
     hparams = wandb.config
     wandb.log({'percentage snipped':((1-hparams['snip_factor'])*100)})
     
+    if args.load_model != None:
+        model_path = os.path.normpath(args.model_path[0])
+        model_file_path = os.path.join(model_path, 'alexnet.pth')
+        model = createAlexNet()
+        model.load_state_dict(torch.load(model_file_path, map_location='cpu'))
+        model.to(device)
     model = createAlexNet().to(device) # model for 200 classes
     if args.pretrain:
         pytorch_alexnet = tv.models.alexnet(pretrained=True).to(device) #pretrained model for 1000 classes
