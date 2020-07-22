@@ -32,8 +32,8 @@ def epoch_time(start_time, end_time):
     elapsed_time = end_time - start_time
     elapsed_mins = int(elapsed_time / 60)
     elapsed_secs = int(elapsed_time - (elapsed_mins * 60))
-    round_to_mins = int(round(elapsed_time/60,0))
-    return round_to_mins, elapsed_mins, elapsed_secs
+    round_to_secs = int(round(elapsed_time,0))
+    return round_to_secs, elapsed_mins, elapsed_secs
 
 def y_mse(Y, output):
     # first subtracts element wise from labels
@@ -138,7 +138,7 @@ def train(args, optimizer, train_loader, val_loader, criterion=nn.CrossEntropyLo
             n_correct += (torch.argmax(output, dim=1)
                           == labels).sum().item()
             n_total += N
-            wandb.log({"running accuracy":n_correct/n_total, "epoch":epoch+1})
+            wandb.log({"running accuracy (%)":n_correct*100/n_total, "epoch":epoch+1})
 
             # evaluation mode (e.g. adds dropped neurons back in)
             model.eval()
@@ -164,7 +164,7 @@ def train(args, optimizer, train_loader, val_loader, criterion=nn.CrossEntropyLo
                         n_val_total += v_N
                         
                 lr_scheduler.step(v_cross_entropy_sum / n_total_batches)
-                wandb.log({"val accuracy":n_val_correct / n_val_total, "val loss":v_cross_entropy_sum / n_total_batches})
+                wandb.log({"val accuracy":(n_val_correct*100) / n_val_total, "val loss":v_cross_entropy_sum / n_total_batches})
                 print(
                     f"[epoch {epoch + 1}, iteration {i}] \t accuracy: {n_val_correct / n_val_total} \t cross entropy: {v_cross_entropy_sum / n_total_batches}")
                 validation_accuracy.append(n_val_correct / n_val_total)
@@ -177,9 +177,15 @@ def train(args, optimizer, train_loader, val_loader, criterion=nn.CrossEntropyLo
                             print(f'Saving current best model to \'{save_path}\'.')
                             torch.save(model.state_dict(),
                                        save_path)
+                if args.acc_target <= (n_val_correct / n_val_total):
+                    acc_target_time = time.time()
+                    to_nearest_secs, mins, secs = epoch_time(start_time, acc_target_time)
+                    print(f'Time to reach acc of {args.acc_target}%: {mins}m {secs}s')
+                    wandb.log({f'Time to reach acc of {args.acc_target}%':to_nearest_secs})
+                    break
                         
         end_time = time.time()
-        to_nearest_mins, mins, secs = epoch_time(start_time, end_time)
+        to_nearest_secs, mins, secs = epoch_time(start_time, end_time)
         print(f'Time taken: {mins}m {secs}s')
         wandb.log({'Time taken (min)':to_nearest_mins})
         num_correct_k1 = 0
@@ -190,11 +196,11 @@ def train(args, optimizer, train_loader, val_loader, criterion=nn.CrossEntropyLo
                 labels = y.to(device)
                 num_correct_k1 += get_topk(final_preds, labels, k=1)
                 num_correct_k += get_topk(final_preds, labels, k=args.topk)
-            print('len of val loader is {len(val_loader)}')
-            print(f"Final Top-1 acc: {num_correct_k1*100/len(val_loader)}%")
-            print(f"Final Top-{args.topk} acc: {num_correct_k*100/len(val_loader)}%")
+            print(f'len of val loader is {len(val_loader)}')
+            print(f"Final Top-1 acc: {num_correct_k1*100/n_val_total}%")
+            print(f"Final Top-{args.topk} acc: {num_correct_k*100/n_val_total}%")
             topk_acc = f"top{args.topk}_acc%"
-            wandb.log({'top1_acc%':(num_correct_k1*100/len(val_loader)), topk_acc:(num_correct_k*100/len(val_loader))})
+            wandb.log({'top1_acc%':(num_correct_k1*100/n_val_total), topk_acc:(num_correct_k*100/n_val_total)})
         except Exception as e:
             print('getting topk failed')
             print(e)
