@@ -85,4 +85,4 @@ for i in range(len(subset_labels)):
 #         plt.imshow(x_img)
 #         plt.show()
 
-camTest(model, image_transforms, subset_labels)
+#camTest(model, image_transforms, subset_labels)
