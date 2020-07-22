@@ -79,7 +79,7 @@ with torch.no_grad():
     for j, (x, y) in enumerate(val_loader):
         pred = torch.argmax(model(x), dim=1)
         n_correct += (pred == labels).sum().item()
-        n_total += 1
+        n_total += x.shape[0]
         if j % 1000 == 0:
             print(f'y label: {y}\tmodel label: {pred}')
             print(f'y text: {subset_labels[y]}\tmodel text: {subset_labels[pred]}')
