@@ -74,8 +74,8 @@ def train(args, optimizer, train_loader, val_loader, criterion=nn.CrossEntropyLo
     if save and save_path is None:
         raise AssertionError(
             'Saving is enabled but no save path was inputted.')
-    if (device == 'cuda:2') and (args.cuda != None):
-        device = args.cuda
+    if (device == 'cuda:2') and (args.cuda != 2):
+        device = f'cuda:{args.cuda}'
     hparams = {'batch_size':args.batch_size,
            'epochs':args.epochs,
            'init_lr':args.init_lr,
