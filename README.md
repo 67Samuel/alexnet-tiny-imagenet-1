@@ -1,3 +1,31 @@
+# Clone repo
+```
+git clone https://github.com/67Samuel/alexnet-tiny-imagenet-1.git alexnet-tiny
+cd alexnet-tiny
+```
+
+# Download data
+```
+chmod +x prep.sh
+./prep.sh
+```
+
+# To train a single model
+```
+python train.py
+```
+
+# To do a wandb hyperparameter sweep
+```
+git checkout -b wandb_sweep origin/wandb_sweep
+wandb sweep bayes_sweep.yaml
+```
+Then, copy and paste the command similar to wandb agent 67samuel/alexnet-tiny/YOUR-SWEEP-ID
+
+# Command line arguments
+
+
+
 This took me a while to do mostly because of how long it took to unzip the dataset (tiny-imagenet-200) and how large the network is (for my measly Intel iGPU). Even just training the last layer took my laptop half an hour to get through one-third of an epoch.
 
 After ending training there, I saved the model and tested it against the validation set. I’m seeing about 40% accuracy which is extremely good especially for only getting through a third of an epoch and shows how powerful transfer learning can be.
