@@ -7,7 +7,7 @@ parameters:
   epochs:
     distribution: int_uniform
     min: 2
-    max: 10
+    max: 15
   init_lr:
     distribution: uniform
     min: 0.0025
