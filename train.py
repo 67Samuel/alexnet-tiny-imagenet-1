@@ -58,6 +58,8 @@ parser.add_argument('--acc_target', default=35.0, type=float,
                     help='target validation accuracy to stop training at (default: 35.0)')
 parser.add_argument('--tl', action='store_true', default=False, 
                     help='train only output layer (default: False)')
+parser.add_argument('--lr_patience', default='3', type=int, 
+                    help='patience for lr scheduler (default: 3)') 
 
 
 # debug settings
