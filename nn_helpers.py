@@ -166,7 +166,7 @@ def train(args, optimizer, train_loader, val_loader, criterion=nn.CrossEntropyLo
                 lr_scheduler.step(v_cross_entropy_sum / n_total_batches)
                 wandb.log({"val accuracy":(n_val_correct*100) / n_val_total, "val loss":v_cross_entropy_sum / n_total_batches})
                 print(
-                    f"[epoch {epoch + 1}, iteration {i}] \t accuracy: {n_val_correct / n_val_total} \t cross entropy: {v_cross_entropy_sum / n_total_batches}")
+                    f"[epoch {epoch + 1}, iteration {i}] \t accuracy: {n_val_correct*100 / n_val_total}% \t cross entropy: {v_cross_entropy_sum / n_total_batches}")
                 validation_accuracy.append(n_val_correct / n_val_total)
                 validation_cross_entropy.append(
                     v_cross_entropy_sum / n_total_batches)
