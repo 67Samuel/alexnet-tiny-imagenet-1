@@ -69,20 +69,24 @@ for i in range(len(subset_labels)):
     sl = subset_labels[i]
     subset_labels[i] = labels[sl]
 
-# val_dataset = TinyImageNetValSet(os.path.join(
-#     './data/tiny-imagenet-200', 'val'), transform=image_transforms)
-# val_loader = torch.utils.data.DataLoader(
-#     val_dataset, shuffle=False, batch_size=1)
-# with torch.no_grad():
-#     for j, (x, y) in enumerate(val_loader):
-#         if j == 4:
-#             break
-#         y_hat = torch.argmax(model(x), dim=1)
-#         print(f'y label: {y}\tmodel label: {y_hat}')
-#         print(f'y text: {subset_labels[y]}\tmodel text: {subset_labels[y_hat]}')
-#         x_inv = inverse_normalize_transform(x[0])
-#         x_img = (x_inv.numpy().transpose(1,2,0) * 255)
-#         plt.imshow(x_img)
-#         plt.show()
-
+val_dataset = TinyImageNetValSet(os.path.join(
+    './data/tiny-imagenet-200', 'val'), transform=image_transforms)
+val_loader = torch.utils.data.DataLoader(
+    val_dataset, shuffle=False, batch_size=1)
+n_correct = 0
+n_total = 0
+with torch.no_grad():
+    for j, (x, y) in enumerate(val_loader):
+        pred = torch.argmax(model(x), dim=1)
+        n_correct += (pred == labels).sum().item()
+        n_total += 1
+        if j % 1000 == 0:
+            print(f'y label: {y}\tmodel label: {pred}')
+            print(f'y text: {subset_labels[y]}\tmodel text: {subset_labels[pred]}')
+            #x_inv = inverse_normalize_transform(x[0])
+            #x_img = (x_inv.numpy().transpose(1,2,0) * 255)
+            #plt.imshow(x_img)
+            #plt.show()
+print("="*50)
+print(f"Accuracy: {n_correct*100/n_total}%")
 #camTest(model, image_transforms, subset_labels)
