@@ -187,7 +187,7 @@ def train(args, optimizer, train_loader, val_loader, criterion=nn.CrossEntropyLo
         end_time = time.time()
         to_nearest_secs, mins, secs = epoch_time(start_time, end_time)
         print(f'Time taken: {mins}m {secs}s')
-        wandb.log({'Time taken (min)':to_nearest_mins})
+        wandb.log({'Time taken (secs)':to_nearest_secs})
         num_correct_k1 = 0
         num_correct_k = 0
         try:
