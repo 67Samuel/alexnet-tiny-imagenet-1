@@ -113,80 +113,72 @@ def train(args, optimizer, train_loader, val_loader, criterion=nn.CrossEntropyLo
 
     best_model_accuracy = 0
     start_time = time.time()
-    while target_acc_reached == False:
-        for epoch in range(hparams["epochs"]):
-            n_correct = 0
-            n_total = 0
-            for i, batch in enumerate(train_loader):
-                x, labels = batch
-                x, labels = x.to(device), labels.to(device)
-                N = x.shape[0]
-
-                # training mode (for things like dropout)
-                model.train()
-
-                # clear previous gradients
-                opt.zero_grad()
-
-                output = model(x)
-                loss = criterion(output, labels)
-                wandb.log({"loss":loss})
-                loss.backward()
-                opt.step()
-
-                train_cross_entropy.append(loss)
-
-                n_correct += (torch.argmax(output, dim=1)
-                              == labels).sum().item()
-                n_total += N
-                wandb.log({"running accuracy (%)":n_correct*100/n_total, "epoch":epoch+1})
-
-                # evaluation mode (e.g. adds dropped neurons back in)
-                model.eval()
-                if i % args.validate_every == 0:
-                    n_val_correct = 0
-                    n_val_total = 0
-                    v_cross_entropy_sum = 0
-                    n_total_batches = len(val_loader)
-
-                    # don't calculate gradients here
-                    with torch.no_grad():
-                        for j, v_batch in enumerate(val_loader):
-                            v_x, v_labels = v_batch
-                            v_x, v_labels = v_x.to(
-                                device), v_labels.to(device)
-                            v_N = v_x.shape[0]
-
-                            v_output = model(v_x)
-                            v_loss = criterion(v_output, v_labels)
-                            v_cross_entropy_sum += v_loss
-                            n_val_correct += (torch.argmax(v_output,
-                                                           dim=1) == v_labels).sum().item()
-                            n_val_total += v_N
-
-                    lr_scheduler.step(v_cross_entropy_sum / n_total_batches)
-                    wandb.log({"val accuracy":(n_val_correct*100) / n_val_total, "val loss":v_cross_entropy_sum / n_total_batches})
-                    print(
-                        f"[epoch {epoch + 1}, iteration {i}] \t accuracy: {n_val_correct*100 / n_val_total}% \t cross entropy: {v_cross_entropy_sum / n_total_batches}")
-                    validation_accuracy.append(n_val_correct / n_val_total)
-                    validation_cross_entropy.append(
-                        v_cross_entropy_sum / n_total_batches)
-                    if args.save_model:
-                        if n_val_correct / n_val_total >= best_model_accuracy:
-                            best_model_accuracy = n_val_correct / n_val_total
-                            if save:
-                                print(f'Saving current best model to \'{save_path}\'.')
-                                torch.save(model.state_dict(),
-                                           save_path)
-                    if args.acc_target <= (n_val_correct*100 / n_val_total):
-                        acc_target_time = time.time()
-                        to_nearest_secs, mins, secs = epoch_time(start_time, acc_target_time)
-                        print(f'Time to reach acc of {args.acc_target}%: {mins}m {secs}s')
-                        wandb.log({f'Time to reach acc of {args.acc_target}%':to_nearest_secs})
-                        target_acc_reached = True
-                       
-            print(
-                f"epoch {epoch + 1} accumulated train accuracy: {n_correct*100 / n_total}%")
+    for epoch in range(hparams["epochs"]):
+        if target_acc_reached == True:
+            break
+        n_correct = 0
+        n_total = 0
+        for i, batch in enumerate(train_loader):
+            x, labels = batch
+            x, labels = x.to(device), labels.to(device)
+            N = x.shape[0]
+         # training mode (for things like dropout)
+            model.train()
+         # clear previous gradients
+            opt.zero_grad()
+         output = model(x)
+            loss = criterion(output, labels)
+            wandb.log({"loss":loss})
+            loss.backward()
+            opt.step()
+         train_cross_entropy.append(loss)
+         n_correct += (torch.argmax(output, dim=1)
+                          == labels).sum().item()
+            n_total += N
+            wandb.log({"running accuracy (%)":n_correct*100/n_total, "epoch":epoch+1})
+         # evaluation mode (e.g. adds dropped neurons back in)
+            model.eval()
+            if i % args.validate_every == 0:
+                n_val_correct = 0
+                n_val_total = 0
+                v_cross_entropy_sum = 0
+                n_total_batches = len(val_loader)
+             # don't calculate gradients here
+                with torch.no_grad():
+                    for j, v_batch in enumerate(val_loader):
+                        v_x, v_labels = v_batch
+                        v_x, v_labels = v_x.to(
+                            device), v_labels.to(device)
+                        v_N = v_x.shape[0]
+                     v_output = model(v_x)
+                        v_loss = criterion(v_output, v_labels)
+                        v_cross_entropy_sum += v_loss
+                        n_val_correct += (torch.argmax(v_output,
+                                                       dim=1) == v_labels).sum().item()
+                        n_val_total += v_N
+             lr_scheduler.step(v_cross_entropy_sum / n_total_batches)
+                wandb.log({"val accuracy":(n_val_correct*100) / n_val_total, "val loss":v_cross_entropy_sum / n_total_batches})
+                print(
+                    f"[epoch {epoch + 1}, iteration {i}] \t accuracy: {n_val_correct*100 / n_val_total}% \t cross entropy: {v_cross_entropy_sum / n_total_batches}")
+                validation_accuracy.append(n_val_correct / n_val_total)
+                validation_cross_entropy.append(
+                    v_cross_entropy_sum / n_total_batches)
+                if args.save_model:
+                    if n_val_correct / n_val_total >= best_model_accuracy:
+                        best_model_accuracy = n_val_correct / n_val_total
+                        if save:
+                            print(f'Saving current best model to \'{save_path}\'.')
+                            torch.save(model.state_dict(),
+                                       save_path)
+                if args.acc_target <= (n_val_correct*100 / n_val_total):
+                    acc_target_time = time.time()
+                    to_nearest_secs, mins, secs = epoch_time(start_time, acc_target_time)
+                    print(f'Time to reach acc of {args.acc_target}%: {mins}m {secs}s')
+                    wandb.log({f'Time to reach acc of {args.acc_target}%':to_nearest_secs})
+                    target_acc_reached = True
+                   
+        print(
+            f"epoch {epoch + 1} accumulated train accuracy: {n_correct*100 / n_total}%")
     train_accuracy.append(n_correct / n_total)
     end_time = time.time()
     to_nearest_secs, mins, secs = epoch_time(start_time, end_time)
