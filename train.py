@@ -60,6 +60,14 @@ parser.add_argument('--tl', action='store_true', default=False,
                     help='train only output layer (default: False)')
 parser.add_argument('--lr_patience', default='3', type=int, 
                     help='patience for lr scheduler (default: 3)') 
+parser.add_argument('--early-stopping', action='store_false',  default=True, 
+                    help='use early stopping (default: True)') 
+parser.add_argument('--lesv', default=1.0, type=float, 
+                    help='late early stopping value; the value below which to add the late early stopper (default: 1.0)')
+parser.add_argument('--late-early-stop', default=3, type=int, 
+                    help='patience of early stopper that activates when loss<args.lesv (default: 3)')
+parser.add_argument('--esp', default=5, type=int, 
+                    help='patience for early stopping (default: 5)')    
 
 
 # debug settings
