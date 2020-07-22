@@ -183,31 +183,31 @@ def train(args, optimizer, train_loader, val_loader, criterion=nn.CrossEntropyLo
                     print(f'Time to reach acc of {args.acc_target}%: {mins}m {secs}s')
                     wandb.log({f'Time to reach acc of {args.acc_target}%':to_nearest_secs})
                     break
-                        
-        end_time = time.time()
-        to_nearest_secs, mins, secs = epoch_time(start_time, end_time)
-        print(f'Time taken: {mins}m {secs}s')
-        wandb.log({'Time taken (secs)':to_nearest_secs})
-        num_correct_k1 = 0
-        num_correct_k = 0
-        try:
-            for X,y in val_loader:
-                final_preds = model(X.to(device))
-                labels = y.to(device)
-                num_correct_k1 += get_topk(final_preds, labels, k=1)
-                num_correct_k += get_topk(final_preds, labels, k=args.topk)
-            print(f'len of val loader is {len(val_loader)}')
-            print(f"Final Top-1 acc: {num_correct_k1*100/n_val_total}%")
-            print(f"Final Top-{args.topk} acc: {num_correct_k*100/n_val_total}%")
-            topk_acc = f"top{args.topk}_acc%"
-            wandb.log({'top1_acc%':(num_correct_k1*100/n_val_total), topk_acc:(num_correct_k*100/n_val_total)})
-        except Exception as e:
-            print('getting topk failed')
-            print(e)
-            return
+                       
         print(
             f"epoch {epoch + 1} accumulated train accuracy: {n_correct*100 / n_total}%")
-        train_accuracy.append(n_correct / n_total)
+    train_accuracy.append(n_correct / n_total)
+    end_time = time.time()
+    to_nearest_secs, mins, secs = epoch_time(start_time, end_time)
+    print(f'Time taken: {mins}m {secs}s')
+    wandb.log({'Time taken (secs)':to_nearest_secs})
+    num_correct_k1 = 0
+    num_correct_k = 0
+    try:
+        for X,y in val_loader:
+            final_preds = model(X.to(device))
+            labels = y.to(device)
+            num_correct_k1 += get_topk(final_preds, labels, k=1)
+            num_correct_k += get_topk(final_preds, labels, k=args.topk)
+        print(f'len of val loader is {len(val_loader)}')
+        print(f"Final Top-1 acc: {num_correct_k1*100/n_val_total}%")
+        print(f"Final Top-{args.topk} acc: {num_correct_k*100/n_val_total}%")
+        topk_acc = f"top{args.topk}_acc%"
+        wandb.log({'top1_acc%':(num_correct_k1*100/n_val_total), topk_acc:(num_correct_k*100/n_val_total)})
+    except Exception as e:
+        print('getting topk failed')
+        print(e)
+        return
 
     return (train_cross_entropy, train_accuracy, validation_cross_entropy, validation_accuracy)
 
