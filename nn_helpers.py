@@ -177,7 +177,7 @@ def train(args, optimizer, train_loader, val_loader, criterion=nn.CrossEntropyLo
                             print(f'Saving current best model to \'{save_path}\'.')
                             torch.save(model.state_dict(),
                                        save_path)
-                if args.acc_target <= (n_val_correct / n_val_total):
+                if args.acc_target <= (n_val_correct*100 / n_val_total):
                     acc_target_time = time.time()
                     to_nearest_secs, mins, secs = epoch_time(start_time, acc_target_time)
                     print(f'Time to reach acc of {args.acc_target}%: {mins}m {secs}s')
@@ -206,7 +206,7 @@ def train(args, optimizer, train_loader, val_loader, criterion=nn.CrossEntropyLo
             print(e)
             return
         print(
-            f"epoch {epoch + 1} accumulated train accuracy: {n_correct / n_total}")
+            f"epoch {epoch + 1} accumulated train accuracy: {n_correct*100 / n_total}%")
         train_accuracy.append(n_correct / n_total)
 
     return (train_cross_entropy, train_accuracy, validation_cross_entropy, validation_accuracy)
