@@ -166,7 +166,10 @@ def train(args, optimizer, train_loader, val_loader, criterion=nn.CrossEntropyLo
     opt = optimizer(model.parameters(), lr=hparams["init_lr"], weight_decay=hparams['weight_decay_rate'])
     lr_scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(
                    opt, patience=args.lr_patience, factor=0.5)
-    wandb.log({'lr':optimizer.param_groups[0]['lr']})
+    try:
+        wandb.log({'lr':optimizer.param_groups[0]['lr']})
+    except Exception:
+        pass
     train_cross_entropy = []
     train_accuracy = []
     validation_cross_entropy = []
