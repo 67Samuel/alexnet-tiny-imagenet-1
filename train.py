@@ -46,7 +46,7 @@ parser.add_argument('--img_size', default=224, type=int,
                     help='image size (default: 224)')  
 parser.add_argument('--perform_snip', action='store_true',  default=False, 
                     help='perform snip (default: False)')  
-parser.add_argument('--validate_every', default='521', type=int, 
+parser.add_argument('--validate_every', default=521, type=int, 
                     help='validation step (default: 521)') 
 parser.add_argument('--topk', default=5, type=int, 
                     help='top-k accuracy to get besides 1 (default: 5)')
@@ -58,7 +58,7 @@ parser.add_argument('--acc_target', default=35.0, type=float,
                     help='target validation accuracy to stop training at (default: 35.0)')
 parser.add_argument('--tl', action='store_true', default=False, 
                     help='train only output layer (default: False)')
-parser.add_argument('--lr_patience', default='3', type=int, 
+parser.add_argument('--lr_patience', default=3, type=int, 
                     help='patience for lr scheduler (default: 3)') 
 parser.add_argument('--early-stopping', action='store_false',  default=True, 
                     help='use early stopping (default: True)') 
