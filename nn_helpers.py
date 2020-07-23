@@ -178,9 +178,12 @@ def train(args, optimizer, train_loader, val_loader, criterion=nn.CrossEntropyLo
     if args.early_stopping:
         early_stopper = EarlyStopping(patience=args.esp)
         late_early_stopping=False
-
     best_model_accuracy = 0
     start_time = time.time()
+    topk_acc = f"top{args.topk}_acc%"
+    num_correct_k1 = 0
+    num_correct_k = 0
+    
     for epoch in range(hparams["epochs"]):
         if args.early_stopping:
             if (early_stopper.early_stop == True):
@@ -230,6 +233,9 @@ def train(args, optimizer, train_loader, val_loader, criterion=nn.CrossEntropyLo
                         n_val_correct += (torch.argmax(v_output,
                                                        dim=1) == v_labels).sum().item()
                         n_val_total += v_N
+                        num_correct_k1 += get_topk(final_preds, labels, k=1)
+                        num_correct_k += get_topk(final_preds, labels, k=args.topk)
+                    wandb.log({'top1_acc%':(num_correct_k1*100/n_val_total), topk_acc:(num_correct_k*100/n_val_total)})
                 # update lr scheduler every validation step
                 lr_scheduler.step(v_cross_entropy_sum / n_total_batches)
                 wandb.log({"val accuracy":(n_val_correct*100) / n_val_total, "val loss":v_cross_entropy_sum / n_total_batches})
@@ -286,8 +292,8 @@ def train(args, optimizer, train_loader, val_loader, criterion=nn.CrossEntropyLo
             num_correct_k += get_topk(final_preds, labels, k=args.topk)
         print(f"Final Top-1 acc: {num_correct_k1*100/n_val_total}%")
         print(f"Final Top-{args.topk} acc: {num_correct_k*100/n_val_total}%")
-        topk_acc = f"top{args.topk}_acc%"
-        wandb.log({'top1_acc%':(num_correct_k1*100/n_val_total), topk_acc:(num_correct_k*100/n_val_total)})
+        final_topk_acc = f"final top{args.topk} acc%"
+        wandb.log({'final top1 acc%':(num_correct_k1*100/n_val_total), final_topk_acc:(num_correct_k*100/n_val_total)})
     except Exception as e:
         print('getting topk failed')
         print(e)
