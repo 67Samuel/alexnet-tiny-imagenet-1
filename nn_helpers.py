@@ -170,10 +170,10 @@ def train(args, optimizer, train_loader, val_loader, criterion=nn.CrossEntropyLo
         wandb.log({'lr':optimizer.param_groups[0]['lr']})
     except Exception:
         pass
-    train_cross_entropy = []
-    train_accuracy = []
-    validation_cross_entropy = []
-    validation_accuracy = []
+    #train_cross_entropy = []
+    #train_accuracy = []
+    #validation_cross_entropy = []
+    #validation_accuracy = []
     target_acc_reached = False
     if args.early_stopping:
         early_stopper = EarlyStopping(patience=args.esp)
@@ -205,7 +205,7 @@ def train(args, optimizer, train_loader, val_loader, criterion=nn.CrossEntropyLo
             wandb.log({"loss":loss})
             loss.backward()
             opt.step()
-            train_cross_entropy.append(loss)
+            #train_cross_entropy.append(loss)
             n_correct += (torch.argmax(output, dim=1)
                           == labels).sum().item()
             n_total += N
@@ -235,8 +235,8 @@ def train(args, optimizer, train_loader, val_loader, criterion=nn.CrossEntropyLo
                 wandb.log({"val accuracy":(n_val_correct*100) / n_val_total, "val loss":v_cross_entropy_sum / n_total_batches})
                 print(
                     f"[epoch {epoch + 1}, iteration {i}] \t accuracy: {n_val_correct*100 / n_val_total}% \t cross entropy: {v_cross_entropy_sum / n_total_batches}")
-                validation_accuracy.append(n_val_correct / n_val_total)
-                validation_cross_entropy.append(v_cross_entropy_sum / n_total_batches)
+                #validation_accuracy.append(n_val_correct / n_val_total)
+                #validation_cross_entropy.append(v_cross_entropy_sum / n_total_batches)
                 if args.save_model:
                     if n_val_correct / n_val_total >= best_model_accuracy:
                         best_model_accuracy = n_val_correct / n_val_total
@@ -263,11 +263,19 @@ def train(args, optimizer, train_loader, val_loader, criterion=nn.CrossEntropyLo
                    
         print(
             f"epoch {epoch + 1} accumulated train accuracy: {n_correct*100 / n_total}%")
-    train_accuracy.append(n_correct / n_total)
+    #train_accuracy.append(n_correct / n_total)
     end_time = time.time()
     to_nearest_secs, mins, secs = epoch_time(start_time, end_time)
     print(f'Time taken: {mins}m {secs}s')
     wandb.log({'Time taken (secs)':to_nearest_secs})
+    # free up memory
+    del n_val_correct
+    del v_loss
+    del v_cross_entropy_sum
+    del v_output
+    del output
+    del loss
+    
     num_correct_k1 = 0
     num_correct_k = 0
     try:
@@ -285,7 +293,8 @@ def train(args, optimizer, train_loader, val_loader, criterion=nn.CrossEntropyLo
         print(e)
         return
 
-    return (train_cross_entropy, train_accuracy, validation_cross_entropy, validation_accuracy)
+    #return (train_cross_entropy, train_accuracy, validation_cross_entropy, validation_accuracy)
+    return
 
 def graphTrainOutput(train_cross_entropy, train_accuracy, validation_cross_entropy, validation_accuracy, epochs=2, n_samples_in_epoch=60000, validate_every=2000):
     n_samples = len(train_cross_entropy)
