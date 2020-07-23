@@ -181,7 +181,6 @@ def train(args, optimizer, train_loader, val_loader, criterion=nn.CrossEntropyLo
     best_model_accuracy = 0
     start_time = time.time()
     topk_acc = f"top{args.topk}_acc%"
-    num_correct_k1 = 0
     num_correct_k = 0
     
     for epoch in range(hparams["epochs"]):
@@ -230,12 +229,10 @@ def train(args, optimizer, train_loader, val_loader, criterion=nn.CrossEntropyLo
                         v_output = model(v_x)
                         v_loss = criterion(v_output, v_labels)
                         v_cross_entropy_sum += v_loss
-                        n_val_correct += (torch.argmax(v_output,
-                                                       dim=1) == v_labels).sum().item()
+                        n_val_correct += (torch.argmax(v_output,dim=1) == v_labels).sum().item()
                         n_val_total += v_N
-                        num_correct_k1 += get_topk(final_preds, labels, k=1)
-                        num_correct_k += get_topk(final_preds, labels, k=args.topk)
-                    wandb.log({'top1_acc%':(num_correct_k1*100/n_val_total), topk_acc:(num_correct_k*100/n_val_total)})
+                        num_correct_k += get_topk(v_output, v_labels, k=args.topk)
+                wandb.log({'top1_acc%':(n_val_correct*100) / n_val_total, topk_acc:(num_correct_k*100/n_val_total)})
                 # update lr scheduler every validation step
                 lr_scheduler.step(v_cross_entropy_sum / n_total_batches)
                 wandb.log({"val accuracy":(n_val_correct*100) / n_val_total, "val loss":v_cross_entropy_sum / n_total_batches})
