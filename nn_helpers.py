@@ -225,6 +225,7 @@ def train(args, optimizer, train_loader, val_loader, criterion=nn.CrossEntropyLo
                         n_val_correct += (torch.argmax(v_output,
                                                        dim=1) == v_labels).sum().item()
                         n_val_total += v_N
+                # update lr scheduler every validation step
                 lr_scheduler.step(v_cross_entropy_sum / n_total_batches)
                 wandb.log({"val accuracy":(n_val_correct*100) / n_val_total, "val loss":v_cross_entropy_sum / n_total_batches})
                 print(
