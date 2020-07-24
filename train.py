@@ -60,17 +60,22 @@ parser.add_argument('--tl', action='store_true', default=False,
                     help='train only output layer (default: False)')
 parser.add_argument('--lr_patience', default=3, type=int, 
                     help='patience for lr scheduler (default: 3)') 
-parser.add_argument('--early-stopping', action='store_false',  default=True, 
+parser.add_argument('--early_stopping', action='store_false',  default=True, 
                     help='use early stopping (default: True)') 
 parser.add_argument('--lesv', default=1.0, type=float, 
                     help='late early stopping value; the value below which to add the late early stopper (default: 1.0)')
-parser.add_argument('--late-early-stop', default=3, type=int, 
+parser.add_argument('--late_early_stop', default=3, type=int, 
                     help='patience of early stopper that activates when loss<args.lesv (default: 3)')
 parser.add_argument('--esp', default=5, type=int, 
                     help='patience for early stopping (default: 5)')  
 parser.add_argument('--pretrain', action='store_true',  default=False, 
                     help='load pretrained model (default: False)') 
-parser.add_argument('--load_model', type=str, help='directory of the saved model (default: None)', default=None)
+parser.add_argument('--load_model', type=str, 
+                    help='directory of the saved model (default: None)', default=None)
+parser.add_argument('--multi_gpu_selection', default='02', type=str, 
+                    help='indicate which gpus to use. 02 means 0 and 2. (default: 02)')
+parser.add_argument('--multi_gpu', action='store_true', default=False, 
+                    help='use multiple GPUs to train (default: False)')
 
 
 # debug settings
