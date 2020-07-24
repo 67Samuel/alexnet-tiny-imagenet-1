@@ -144,8 +144,7 @@ def train(args, optimizer, train_loader, val_loader, criterion=nn.CrossEntropyLo
         model = createAlexNet().to(device) # model for 200 classes
         if args.pretrain:
             pytorch_alexnet = tv.models.alexnet(pretrained=True).to(device) #pretrained model for 1000 classes
-        # apply SNIP
-        if args.pretrain:
+            # apply SNIP
             keep_masks = SNIP(pytorch_alexnet, hparams['snip_factor'], train_loader, device, img_size=args.img_size)
             apply_prune_mask(pytorch_alexnet, keep_masks)
         else:
@@ -154,6 +153,29 @@ def train(args, optimizer, train_loader, val_loader, criterion=nn.CrossEntropyLo
         # for transfer learning and shifting snipped weights over to model
         if args.pretrain:
             copyLayerWeightsExceptLast(pytorch_alexnet, model, requires_grad=(not args.tl))
+        if args.multi_gpu:
+            if torch.cuda.device_count() > 1:
+                try:
+                    ls = []
+                    for gpu_idx in args.multi_gpu_selection:
+                        ls.append(int(gpu_idx))
+                    gpu_ids = iter(ls)
+                    print("--info--: there are ", torch.cuda.device_count(), "GPUs. Activate GPUs: ", gpu_ids)
+                    model = nn.DataParallel(model, device_ids=gpu_ids)
+                    print('data parallel v1')
+                except Exception as e:
+                    print(e)
+                    gpu_ids = [0,2]
+                    print("--info--: there are ", torch.cuda.device_count(), "GPUs. Activate GPU: ", gpu_ids)
+                    model = nn.DataParallel(model, device_ids=gpu_ids)
+                    print('data parallel v2')
+                except Exception as e:
+                    print("Let's use", torch.cuda.device_count(), "GPUs!")
+                    # dim = 0 [30, xxx] -> [10, ...], [10, ...], [10, ...] on 3 GPUs
+                    model = nn.DataParallel(model)
+                except Exception as e:
+                    print('multi gpu error:')
+                    print(e)
         model.to(device)
     # calculating percentage snipped
     net = tv.models.alexnet(pretrained=True).to(device)
