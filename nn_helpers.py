@@ -181,7 +181,6 @@ def train(args, optimizer, train_loader, val_loader, criterion=nn.CrossEntropyLo
     best_model_accuracy = 0
     start_time = time.time()
     topk_acc = f"top{args.topk}_acc%"
-    num_correct_k = 0
     
     for epoch in range(hparams["epochs"]):
         if args.early_stopping:
@@ -215,6 +214,7 @@ def train(args, optimizer, train_loader, val_loader, criterion=nn.CrossEntropyLo
             # evaluation mode (e.g. adds dropped neurons back in)
             model.eval()
             if i % args.validate_every == 0:
+                num_correct_k = 0
                 n_val_correct = 0
                 n_val_total = 0
                 v_cross_entropy_sum = 0
