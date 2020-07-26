@@ -22,5 +22,6 @@ wandb sweep bayes_sweep.yaml
 ```
 Then, copy and paste the command similar to wandb agent 67samuel/alexnet-tiny/YOUR-SWEEP-ID
 
-## Command line arguments
+Link to report:
+https://app.wandb.ai/67samuel/from_scratch/reports/Analysis-of-SNIP--VmlldzoxODIxMTA
 
