@@ -153,7 +153,14 @@ def train(args, optimizer, train_loader, val_loader, criterion=nn.CrossEntropyLo
         # for transfer learning and shifting snipped weights over to model
         if args.pretrain:
             copyLayerWeightsExceptLast(pytorch_alexnet, model, requires_grad=(not args.tl))
-        if args.multi_gpu:
+        model.to(device)
+    # calculating percentage snipped
+    net = tv.models.alexnet(pretrained=True).to(device)
+    percentage_snipped_dict = percentage_snipped(net, model)
+    if args.debug:
+        print(percentage_snipped_dict)
+    wandb.log(percentage_snipped_dict)
+    if args.multi_gpu:
             if torch.cuda.device_count() > 1:
                 try:
                     ls = []
@@ -165,13 +172,6 @@ def train(args, optimizer, train_loader, val_loader, criterion=nn.CrossEntropyLo
                     print('data parallel v1')
                 except Exception as e:
                     print(e)
-        model.to(device)
-    # calculating percentage snipped
-    net = tv.models.alexnet(pretrained=True).to(device)
-    percentage_snipped_dict = percentage_snipped(net, model)
-    if args.debug:
-        print(percentage_snipped_dict)
-    wandb.log(percentage_snipped_dict)
     wandb.watch(model, log="all")
 
     opt = optimizer(model.parameters(), lr=hparams["init_lr"], weight_decay=hparams['weight_decay_rate'])
