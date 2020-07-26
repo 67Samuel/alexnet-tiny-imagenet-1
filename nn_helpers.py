@@ -159,22 +159,11 @@ def train(args, optimizer, train_loader, val_loader, criterion=nn.CrossEntropyLo
                     ls = []
                     for gpu_idx in args.multi_gpu_selection:
                         ls.append(int(gpu_idx))
-                    gpu_ids = iter(ls)
+                    gpu_ids = ls
                     print("--info--: there are ", torch.cuda.device_count(), "GPUs. Activate GPUs: ", gpu_ids)
                     model = nn.DataParallel(model, device_ids=gpu_ids)
                     print('data parallel v1')
                 except Exception as e:
-                    print(e)
-                    gpu_ids = [0,2]
-                    print("--info--: there are ", torch.cuda.device_count(), "GPUs. Activate GPU: ", gpu_ids)
-                    model = nn.DataParallel(model, device_ids=gpu_ids)
-                    print('data parallel v2')
-                except Exception as e:
-                    print("Let's use", torch.cuda.device_count(), "GPUs!")
-                    # dim = 0 [30, xxx] -> [10, ...], [10, ...], [10, ...] on 3 GPUs
-                    model = nn.DataParallel(model)
-                except Exception as e:
-                    print('multi gpu error:')
                     print(e)
         model.to(device)
     # calculating percentage snipped
