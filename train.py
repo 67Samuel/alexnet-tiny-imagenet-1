@@ -78,6 +78,10 @@ parser.add_argument('--multi_gpu', action='store_true', default=False,
                     help='use multiple GPUs to train (default: False)')
 parser.add_argument('--dynamic_quantize', action='store_true', default=False, 
                     help='apply dynamic quantization to weights (default: False)')
+parser.add_argument('--quantize', action='store_true', default=False, 
+                    help='prep for pytorch quantization (default: False)')
+parser.add_argument('--qat', action='store_true', default=False, 
+                    help='apply quantization aware training (default: False)')
 
 
 # debug settings
