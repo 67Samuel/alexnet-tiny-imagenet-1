@@ -76,6 +76,8 @@ parser.add_argument('--multi_gpu_selection', default='02', type=str,
                     help='indicate which gpus to use. 02 means 0 and 2. (default: 02)')
 parser.add_argument('--multi_gpu', action='store_true', default=False, 
                     help='use multiple GPUs to train (default: False)')
+parser.add_argument('--dynamic_quantize', action='store_true', default=False, 
+                    help='apply dynamic quantization to weights (default: False)')
 
 
 # debug settings
