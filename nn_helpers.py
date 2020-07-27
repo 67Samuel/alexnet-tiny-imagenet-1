@@ -7,6 +7,8 @@ import torch
 import torch.nn as nn
 import torchvision as tv
 from torchvision.datasets.folder import default_loader
+if args.quantize:
+    import torchbackend='fbgemm'
 import torch.quantization
 
 import cv2
@@ -145,6 +147,9 @@ def train(args, optimizer, train_loader, val_loader, criterion=nn.CrossEntropyLo
         model = createAlexNet().to(device) # model for 200 classes
         if args.pretrain:
             pytorch_alexnet = tv.models.alexnet(pretrained=True).to(device) #pretrained model for 1000 classes
+            if args.quantize:
+                model.qconfig = torch.quantization.get_default_qconfig(backend)
+                torch.backends.quantized.engine=backend
             if args.dynamic_quantize:
                 try:
                     model = torch.quantization.quantize_dynamic(model, {torch.nn.Linear, torch.nn.Conv2d}, dtype=torch.qint8)
@@ -157,6 +162,9 @@ def train(args, optimizer, train_loader, val_loader, criterion=nn.CrossEntropyLo
             keep_masks = SNIP(pytorch_alexnet, hparams['snip_factor'], train_loader, device, img_size=args.img_size)
             apply_prune_mask(pytorch_alexnet, keep_masks)
         else:
+            if args.quantize:
+                model.qconfig = torch.quantization.get_default_qconfig(backend)
+                torch.backends.quantized.engine=backend
             if args.dynamic_quantize:
                 try:
                     model = torch.quantization.quantize_dynamic(model, {torch.nn.Linear, torch.nn.Conv2d}, dtype=torch.qint8)
@@ -326,6 +334,48 @@ def train(args, optimizer, train_loader, val_loader, criterion=nn.CrossEntropyLo
 
     #return (train_cross_entropy, train_accuracy, validation_cross_entropy, validation_accuracy)
     return
+
+def QAT(model):
+    # specify quantization config for QAT
+    qat_model.qconfig=torch.quantization.get_default_qat_qconfig('fbgemm')
+
+    # prepare QAT
+    torch.quantization.prepare_qat(model, inplace=True)
+
+    # convert to quantized version, removing dropout, to check for accuracy on each
+    epochquantized_model=torch.quantization.convert(qat_model.eval(), inplace=False)
+    
+    return epochquantized_model
+
+def create_combined_model(model_fe):
+  # Step 1. Isolate the feature extractor.
+  model_fe_features = nn.Sequential(
+    model_fe.quant,  # Quantize the input
+    model_fe.conv1,
+    model_fe.bn1,
+    model_fe.relu,
+    model_fe.maxpool,
+    model_fe.layer1,
+    model_fe.layer2,
+    model_fe.layer3,
+    model_fe.layer4,
+    model_fe.avgpool,
+    model_fe.dequant,  # Dequantize the output
+  )
+
+  # Step 2. Create a new "head"
+  new_head = nn.Sequential(
+    nn.Dropout(p=0.5),
+    nn.Linear(num_ftrs, 2),
+  )
+
+  # Step 3. Combine, and don't forget the quant stubs.
+  new_model = nn.Sequential(
+    model_fe_features,
+    nn.Flatten(1),
+    new_head,
+  )
+  return new_model
 
 def graphTrainOutput(train_cross_entropy, train_accuracy, validation_cross_entropy, validation_accuracy, epochs=2, n_samples_in_epoch=60000, validate_every=2000):
     n_samples = len(train_cross_entropy)
