@@ -7,6 +7,7 @@ import torch
 import torch.nn as nn
 import torchvision as tv
 from torchvision.datasets.folder import default_loader
+import torch.quantization
 
 import cv2
 from PIL import Image
@@ -144,10 +145,26 @@ def train(args, optimizer, train_loader, val_loader, criterion=nn.CrossEntropyLo
         model = createAlexNet().to(device) # model for 200 classes
         if args.pretrain:
             pytorch_alexnet = tv.models.alexnet(pretrained=True).to(device) #pretrained model for 1000 classes
+            if args.dynamic_quantize:
+                try:
+                    model = torch.quantization.quantize_dynamic(model, {torch.nn.Linear, torch.nn.Conv2d}, dtype=torch.qint8)
+                    print('quantizing linear and conv layers')
+                except Exception as e:
+                    print(e)
+                    model = torch.quantization.quantize_dynamic(model, {torch.nn.Linear}, dtype=torch.qint8)
+                    print('quantizing linear layers only')
             # apply SNIP
             keep_masks = SNIP(pytorch_alexnet, hparams['snip_factor'], train_loader, device, img_size=args.img_size)
             apply_prune_mask(pytorch_alexnet, keep_masks)
         else:
+            if args.dynamic_quantize:
+                try:
+                    model = torch.quantization.quantize_dynamic(model, {torch.nn.Linear, torch.nn.Conv2d}, dtype=torch.qint8)
+                    print('quantizing linear and conv layers')
+                except Exception as e:
+                    print(e)
+                    model = torch.quantization.quantize_dynamic(model, {torch.nn.Linear}, dtype=torch.qint8)
+                    print('quantizing linear layers only')
             keep_masks = SNIP(model, hparams['snip_factor'], train_loader, device, img_size=args.img_size)
             apply_prune_mask(model, keep_masks)
         # for transfer learning and shifting snipped weights over to model
